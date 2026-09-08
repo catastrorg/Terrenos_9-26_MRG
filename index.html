@@ -1,169 +1,679 @@
 <!DOCTYPE html>
 <html lang="es">
+
 <head>
+
   <meta charset="UTF-8">
 
-  <!-- Permite que el mapa se adapte correctamente a celulares -->
-  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <meta name="viewport"
+        content="width=device-width, initial-scale=1.0">
 
   <title>Mapa de Parcelas</title>
 
-  <!-- Leaflet CSS -->
-  <link
-    rel="stylesheet"
-    href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css"
-  />
+
+  <!-- =========================================
+       LEAFLET
+       ========================================= -->
+
+  <link rel="stylesheet"
+        href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css">
+
 
   <style>
 
-    /* Eliminar márgenes de la página */
+    html,
     body {
       margin: 0;
       padding: 0;
+      width: 100%;
+      height: 100%;
     }
 
-    /* El mapa ocupa toda la pantalla */
+
     #map {
       width: 100%;
-      height: 100vh;
+      height: 100%;
     }
 
+
+    /* =========================================
+       ETIQUETA DE PARCELA
+       ========================================= */
+
+    .etiqueta-parcela {
+
+      background: rgba(255,255,255,0.90);
+
+      border: 1px solid #555;
+
+      border-radius: 4px;
+
+      padding: 3px 6px;
+
+      font-size: 12px;
+
+      font-weight: bold;
+
+      color: #222;
+
+      box-shadow: 0 1px 4px rgba(0,0,0,0.25);
+
+      white-space: nowrap;
+
+    }
+
+
+    /* =========================================
+       BOTÓN DE UBICACIÓN
+       ========================================= */
+
+    .boton-ubicacion {
+
+      width: 36px;
+      height: 36px;
+
+      background: white;
+
+      border: 2px solid rgba(0,0,0,0.2);
+
+      border-radius: 4px;
+
+      cursor: pointer;
+
+      font-size: 21px;
+
+      display: flex;
+
+      align-items: center;
+
+      justify-content: center;
+
+      box-shadow: 0 1px 5px rgba(0,0,0,0.35);
+
+    }
+
+
+    .boton-ubicacion:hover {
+
+      background: #f4f4f4;
+
+    }
+
+
+    /* =========================================
+       MARCADOR DE UBICACIÓN
+       ========================================= */
+
+    .mi-ubicacion {
+
+      width: 18px;
+      height: 18px;
+
+      background: #3388ff;
+
+      border: 3px solid white;
+
+      border-radius: 50%;
+
+      box-shadow: 0 0 5px rgba(0,0,0,0.5);
+
+    }
+
+
   </style>
+
 </head>
 
 
 <body>
 
-  <!-- Contenedor del mapa -->
-  <div id="map"></div>
+
+<div id="map"></div>
 
 
-  <!-- Leaflet JavaScript -->
-  <script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js"></script>
+
+<!-- =========================================
+     LEAFLET JS
+     ========================================= -->
+
+<script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js"></script>
 
 
-  <script>
 
-    // ============================================
-    // CREAR EL MAPA
-    // ============================================
-
-    const map = L.map('map');
+<script>
 
 
-    // ============================================
-    // AGREGAR MAPA BASE
-    // ============================================
+// =====================================================
+// 1. CREAR MAPA
+// =====================================================
 
-    L.tileLayer(
-      'https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png',
+const map = L.map('map');
+
+
+
+// =====================================================
+// 2. MAPA BASE SATELITAL
+// =====================================================
+
+// Esri World Imagery
+
+const satelite = L.tileLayer(
+
+  'https://server.arcgisonline.com/ArcGIS/rest/services/' +
+  'World_Imagery/MapServer/tile/{z}/{y}/{x}',
+
+  {
+
+    maxZoom: 22,
+
+    attribution:
+      'Tiles &copy; Esri'
+
+  }
+
+);
+
+
+
+// =====================================================
+// 3. MAPA BASE CALLES
+// =====================================================
+
+const calles = L.tileLayer(
+
+  'https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png',
+
+  {
+
+    maxZoom: 22,
+
+    attribution:
+      '&copy; OpenStreetMap contributors'
+
+  }
+
+);
+
+
+
+// Mostrar satélite inicialmente
+
+satelite.addTo(map);
+
+
+
+// =====================================================
+// 4. CONTROL PARA CAMBIAR MAPA BASE
+// =====================================================
+
+const mapasBase = {
+
+  "🛰️ Satélite": satelite,
+
+  "🗺️ Calles": calles
+
+};
+
+
+L.control.layers(
+
+  mapasBase,
+
+  null,
+
+  {
+
+    position: 'topright',
+
+    collapsed: true
+
+  }
+
+).addTo(map);
+
+
+
+// =====================================================
+// 5. CARGAR GEOJSON
+// =====================================================
+
+fetch('acto_8-9-26.geojson')
+
+  .then(response => {
+
+    if (!response.ok) {
+
+      throw new Error(
+        'No se pudo cargar el archivo GeoJSON'
+      );
+
+    }
+
+    return response.json();
+
+  })
+
+
+  .then(data => {
+
+
+    // ===============================================
+    // CREAR CAPA DE PARCELAS
+    // ===============================================
+
+    const parcelas = L.geoJSON(
+
+      data,
+
       {
-        maxZoom: 22,
-        attribution: '&copy; OpenStreetMap contributors'
-      }
-    ).addTo(map);
+
+        // -------------------------------------------
+        // ESTILO
+        // -------------------------------------------
+
+        style: {
+
+          color: '#ff6600',
+
+          weight: 2,
+
+          fillColor: '#ff9900',
+
+          fillOpacity: 0.25
+
+        },
 
 
-    // ============================================
-    // CARGAR EL ARCHIVO GEOJSON
-    // ============================================
+        // -------------------------------------------
+        // CADA PARCELA
+        // -------------------------------------------
 
-    fetch('acto_8-9-26.geojson')
+        onEachFeature:
 
-      .then(response => {
-
-        // Verificar si el archivo fue encontrado
-        if (!response.ok) {
-          throw new Error(
-            'No se pudo cargar el archivo GeoJSON'
-          );
-        }
-
-        return response.json();
-      })
+          function(feature, layer) {
 
 
-      .then(data => {
+            // =======================================
+            // OBTENER DATOS
+            // =======================================
 
-        // Crear la capa de parcelas
-        const parcelas = L.geoJSON(data, {
+            const manzana =
+              feature.properties.manzana;
 
-          // Estilo de las parcelas
-          style: {
-            color: '#ff6600',
-            weight: 2,
-            fillColor: '#ff9900',
-            fillOpacity: 0.4
-          },
+            const parcela =
+              feature.properties.parcela;
 
 
-          // Configuración individual
-          // para cada elemento del GeoJSON
-          onEachFeature: function(feature, layer) {
 
-            // Verificar si existen atributos
-            if (feature.properties) {
+            // =======================================
+            // TEXTO
+            // =======================================
 
-              let contenido = '';
+            const texto =
 
-              // Recorrer todos los atributos
-              for (let propiedad in feature.properties) {
+              'Mz. ' +
+              manzana +
+              ' - Pc. ' +
+              parcela;
 
-                contenido +=
-                  '<b>' + propiedad + ':</b> ' +
-                  feature.properties[propiedad] +
-                  '<br>';
+
+
+            // =======================================
+            // ETIQUETA PERMANENTE
+            // =======================================
+
+            layer.bindTooltip(
+
+              texto,
+
+              {
+
+                permanent: true,
+
+                direction: 'center',
+
+                className:
+                  'etiqueta-parcela',
+
+                opacity: 1
 
               }
 
+            );
 
-              // Crear ventana emergente
-              layer.bindPopup(contenido);
 
-            }
+
+            // =======================================
+            // POPUP
+            // =======================================
+
+            layer.bindPopup(
+
+              '<strong>' +
+              texto +
+              '</strong>'
+
+            );
+
+
+
+            // =======================================
+            // CAMBIO DE ESTILO AL PASAR EL MOUSE
+            // =======================================
+
+            layer.on(
+
+              'mouseover',
+
+              function() {
+
+                this.setStyle({
+
+                  weight: 4,
+
+                  fillOpacity: 0.45
+
+                });
+
+              }
+
+            );
+
+
+            layer.on(
+
+              'mouseout',
+
+              function() {
+
+                this.setStyle({
+
+                  weight: 2,
+
+                  fillOpacity: 0.25
+
+                });
+
+              }
+
+            );
 
           }
 
-        }).addTo(map);
+      }
+
+    ).addTo(map);
 
 
-        // ============================================
-        // CENTRAR EL MAPA AUTOMÁTICAMENTE
-        // ============================================
 
-        if (parcelas.getBounds().isValid()) {
+    // ===============================================
+    // CENTRAR MAPA EN LAS PARCELAS
+    // ===============================================
 
-          map.fitBounds(
-            parcelas.getBounds(),
-            {
-              padding: [30, 30]
-            }
-          );
+    if (parcelas.getBounds().isValid()) {
+
+      map.fitBounds(
+
+        parcelas.getBounds(),
+
+        {
+
+          padding: [30, 30]
 
         }
 
-      })
+      );
+
+    }
 
 
-      // ============================================
-      // MOSTRAR ERRORES EN LA CONSOLA
-      // ============================================
-
-      .catch(error => {
-
-        console.error(
-          'Error al cargar el GeoJSON:',
-          error
-        );
-
-        alert(
-          'No se pudo cargar el archivo acto_8-9-26.geojson'
-        );
-
-      });
+  })
 
 
-  </script>
+  .catch(error => {
+
+    console.error(error);
+
+    alert(
+      'No se pudo cargar acto_8-9-26.geojson'
+    );
+
+  });
+
+
+
+
+// =====================================================
+// 6. BOTÓN "MI UBICACIÓN"
+// =====================================================
+
+const botonUbicacion = L.control({
+
+  position: 'topright'
+
+});
+
+
+botonUbicacion.onAdd = function(map) {
+
+
+  const div =
+    L.DomUtil.create(
+      'div',
+      'boton-ubicacion'
+    );
+
+
+  div.innerHTML = '📍';
+
+
+  div.title = 'Mostrar mi ubicación';
+
+
+  // Evitar que el mapa interprete el clic
+
+  L.DomEvent.disableClickPropagation(div);
+
+
+  div.onclick = function() {
+
+    localizarUsuario();
+
+  };
+
+
+  return div;
+
+};
+
+
+botonUbicacion.addTo(map);
+
+
+
+// =====================================================
+// 7. FUNCIÓN PARA OBTENER UBICACIÓN
+// =====================================================
+
+let marcadorUsuario = null;
+
+let circuloPrecision = null;
+
+
+
+function localizarUsuario() {
+
+
+  if (!navigator.geolocation) {
+
+    alert(
+      'Este dispositivo no permite obtener la ubicación.'
+    );
+
+    return;
+
+  }
+
+
+  map.locate({
+
+    setView: true,
+
+    maxZoom: 19,
+
+    enableHighAccuracy: true
+
+  });
+
+
+}
+
+
+
+// =====================================================
+// 8. CUANDO SE OBTIENE LA UBICACIÓN
+// =====================================================
+
+map.on(
+
+  'locationfound',
+
+  function(e) {
+
+
+    // Eliminar marcador anterior
+
+    if (marcadorUsuario) {
+
+      map.removeLayer(
+        marcadorUsuario
+      );
+
+    }
+
+
+    if (circuloPrecision) {
+
+      map.removeLayer(
+        circuloPrecision
+      );
+
+    }
+
+
+
+    // ---------------------------------------------
+    // MARCADOR
+    // ---------------------------------------------
+
+    const iconoUsuario = L.divIcon({
+
+      className: '',
+
+      html:
+        '<div class="mi-ubicacion"></div>',
+
+      iconSize: [24, 24],
+
+      iconAnchor: [12, 12]
+
+    });
+
+
+    marcadorUsuario =
+
+      L.marker(
+
+        e.latlng,
+
+        {
+
+          icon: iconoUsuario
+
+        }
+
+      ).addTo(map);
+
+
+
+    marcadorUsuario.bindPopup(
+
+      '<strong>Mi ubicación</strong><br>' +
+
+      'Latitud: ' +
+      e.latlng.lat.toFixed(6) +
+
+      '<br>' +
+
+      'Longitud: ' +
+      e.latlng.lng.toFixed(6) +
+
+      '<br><br>' +
+
+      'Precisión aproximada: ' +
+      Math.round(e.accuracy) +
+      ' m'
+
+    );
+
+
+
+    // ---------------------------------------------
+    // CÍRCULO DE PRECISIÓN
+    // ---------------------------------------------
+
+    circuloPrecision =
+
+      L.circle(
+
+        e.latlng,
+
+        {
+
+          radius: e.accuracy,
+
+          weight: 1,
+
+          fillOpacity: 0.10
+
+        }
+
+      ).addTo(map);
+
+
+  }
+
+);
+
+
+
+// =====================================================
+// 9. ERROR DE GEOLOCALIZACIÓN
+// =====================================================
+
+map.on(
+
+  'locationerror',
+
+  function(e) {
+
+    alert(
+
+      'No se pudo obtener tu ubicación.\n\n' +
+
+      'Verificá que hayas permitido el acceso ' +
+      'a la ubicación en tu navegador.'
+
+    );
+
+  }
+
+);
+
+
+</script>
+
 
 </body>
+
 </html>
