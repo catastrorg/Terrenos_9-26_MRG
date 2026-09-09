@@ -1,4 +1,4 @@
-<!DOCTYPE html>
+><!DOCTYPE html>
 <html lang="es">
 
 <head>
@@ -12,12 +12,10 @@
 
   <title>Mapa de Parcelas</title>
 
-  <!-- LEAFLET -->
   <link
     rel="stylesheet"
     href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css"
   >
-
 
   <style>
 
@@ -42,7 +40,7 @@
 
 
     /* ==================================================
-       OSM SUPERPUESTO SOBRE SATÉLITE
+       OSM SOBRE SATÉLITE
        ================================================== */
 
     .capa-calles-osm {
@@ -55,139 +53,113 @@
        ================================================== */
 
     .panel-busqueda {
-
       width: 230px;
-
       background: rgba(255,255,255,0.96);
-
       padding: 13px;
-
       border-radius: 8px;
-
-      box-shadow:
-        0 2px 10px rgba(0,0,0,0.28);
+      box-shadow: 0 2px 10px rgba(0,0,0,0.28);
     }
 
-
     .titulo-busqueda {
-
       font-size: 15px;
-
       font-weight: bold;
-
       margin-bottom: 10px;
-
       color: #222;
     }
 
-
     .label-busqueda {
-
       display: block;
-
       font-size: 12px;
-
       font-weight: bold;
-
       margin-bottom: 4px;
-
       color: #444;
     }
 
-
     .select-busqueda {
-
       width: 100%;
-
       box-sizing: border-box;
-
       padding: 8px;
-
       margin-bottom: 9px;
-
       border: 1px solid #bbb;
-
       border-radius: 5px;
-
       background: white;
-
       font-size: 14px;
     }
-
 
     .boton-buscar {
-
       width: 100%;
-
       padding: 9px;
-
       border: none;
-
       border-radius: 5px;
-
       background: #333;
-
       color: white;
-
       font-size: 14px;
-
       font-weight: bold;
-
       cursor: pointer;
     }
-
 
     .boton-buscar:hover {
       background: #555;
     }
 
-
     .boton-buscar:disabled {
-
       background: #aaa;
-
       cursor: default;
     }
 
-
     .mensaje-busqueda {
-
       min-height: 14px;
-
       margin-top: 8px;
-
       text-align: center;
-
       font-size: 12px;
-
       color: #555;
     }
 
 
     /* ==================================================
-       NÚMEROS DE MANZANA
-
-       SIN fondo para no tapar la imagen.
+       ETIQUETA DE MANZANA
        ================================================== */
 
     .etiqueta-manzana {
-
       background: transparent;
-
       border: none;
-
       box-shadow: none;
-
       color: white;
-
-      font-size: 18px;
-
+      font-size: 16px;
       font-family: Arial, sans-serif;
-
       font-weight: 700;
-
       text-align: center;
+      white-space: nowrap;
 
+      text-shadow:
+        -1px -1px 0 #000,
+         1px -1px 0 #000,
+        -1px  1px 0 #000,
+         1px  1px 0 #000,
+         0px  0px 3px #000;
+
+      pointer-events: none;
+    }
+
+    .etiqueta-manzana::before {
+      display: none;
+    }
+
+
+    /* ==================================================
+       ETIQUETA PARCELA SELECCIONADA
+       ================================================== */
+
+    .etiqueta-parcela-seleccionada {
+      background: transparent;
+      border: none;
+      box-shadow: none;
+      padding: 0;
+
+      color: #ffff00;
+
+      font-size: 15px;
+      font-weight: 700;
       white-space: nowrap;
 
       text-shadow:
@@ -196,42 +168,10 @@
         -1px  1px 0 #000,
          1px  1px 0 #000,
          0px  0px 4px #000;
-
-      pointer-events: none;
     }
 
-
-    /* eliminar flecha de tooltip */
-
-    .etiqueta-manzana::before {
+    .etiqueta-parcela-seleccionada::before {
       display: none;
-    }
-
-
-    /* ==================================================
-       ETIQUETA DE LA PARCELA SELECCIONADA
-       ================================================== */
-
-    .etiqueta-parcela-seleccionada {
-
-      background: rgba(255,255,255,0.94);
-
-      color: #111;
-
-      border: 2px solid #ffd000;
-
-      border-radius: 5px;
-
-      padding: 5px 8px;
-
-      font-size: 14px;
-
-      font-weight: bold;
-
-      box-shadow:
-        0 2px 7px rgba(0,0,0,0.35);
-
-      white-space: nowrap;
     }
 
 
@@ -240,30 +180,20 @@
        ================================================== */
 
     .boton-ubicacion {
-
       width: 36px;
       height: 36px;
-
       background: white;
-
       border: 2px solid rgba(0,0,0,0.2);
-
       border-radius: 4px;
-
       cursor: pointer;
-
       font-size: 20px;
 
       display: flex;
-
       align-items: center;
-
       justify-content: center;
 
-      box-shadow:
-        0 1px 5px rgba(0,0,0,0.35);
+      box-shadow: 0 1px 5px rgba(0,0,0,0.35);
     }
-
 
     .boton-ubicacion:hover {
       background: #f4f4f4;
@@ -271,27 +201,21 @@
 
 
     /* ==================================================
-       MI UBICACIÓN
+       UBICACIÓN ACTUAL
        ================================================== */
 
     .mi-ubicacion {
-
       width: 18px;
       height: 18px;
-
       background: #3388ff;
-
       border: 3px solid white;
-
       border-radius: 50%;
-
-      box-shadow:
-        0 0 5px rgba(0,0,0,0.6);
+      box-shadow: 0 0 5px rgba(0,0,0,0.6);
     }
 
 
     /* ==================================================
-       ADAPTACIÓN PARA CELULAR
+       CELULAR
        ================================================== */
 
     @media (max-width: 600px) {
@@ -310,7 +234,7 @@
       }
 
       .etiqueta-manzana {
-        font-size: 16px;
+        font-size: 14px;
       }
 
     }
@@ -338,13 +262,13 @@
 // =====================================================
 
 
-// A partir de este zoom se abandona la imagen satelital
-// y se utiliza OSM Standard normal.
+// Último zoom real que pedimos a Esri.
+// Desde ahí Leaflet amplía digitalmente.
 
-const ZOOM_CAMBIO_BASE = 20;
+const MAX_NATIVE_ZOOM_ESRI = 19;
 
 
-// Hasta este zoom se ven los números de manzana.
+// Hasta este zoom se muestran las etiquetas de manzana.
 
 const ZOOM_MAX_ETIQUETAS_MANZANA = 18;
 
@@ -368,40 +292,25 @@ const map = L.map(
 // =====================================================
 
 map.createPane('paneSatelite');
-
 map.getPane('paneSatelite').style.zIndex = 200;
 
-
 map.createPane('paneCallesMezcla');
-
 map.getPane('paneCallesMezcla').style.zIndex = 250;
 
-
-map.createPane('paneOSMNormal');
-
-map.getPane('paneOSMNormal').style.zIndex = 260;
-
-
 map.createPane('paneManzanas');
-
 map.getPane('paneManzanas').style.zIndex = 350;
 
-
 map.createPane('paneParcelas');
-
 map.getPane('paneParcelas').style.zIndex = 400;
 
-
 map.createPane('paneEtiquetas');
-
 map.getPane('paneEtiquetas').style.zIndex = 500;
-
 map.getPane('paneEtiquetas').style.pointerEvents = 'none';
 
 
 
 // =====================================================
-// MAPA SATELITAL ESRI
+// SATÉLITE ESRI
 // =====================================================
 
 const satelite = L.tileLayer(
@@ -413,6 +322,9 @@ const satelite = L.tileLayer(
 
     pane: 'paneSatelite',
 
+    maxNativeZoom:
+      MAX_NATIVE_ZOOM_ESRI,
+
     maxZoom: 22,
 
     attribution:
@@ -420,12 +332,12 @@ const satelite = L.tileLayer(
 
   }
 
-);
+).addTo(map);
 
 
 
 // =====================================================
-// OSM EN MODO MULTIPLY
+// OSM MULTIPLY
 // =====================================================
 
 const callesOSMMezcla = L.tileLayer(
@@ -440,49 +352,15 @@ const callesOSMMezcla = L.tileLayer(
 
     opacity: 0.55,
 
-    className: 'capa-calles-osm',
+    className:
+      'capa-calles-osm',
 
     attribution:
       '&copy; OpenStreetMap contributors'
 
   }
 
-);
-
-
-
-// =====================================================
-// OSM STANDARD NORMAL
-// =====================================================
-
-const osmNormal = L.tileLayer(
-
-  'https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png',
-
-  {
-
-    pane: 'paneOSMNormal',
-
-    maxZoom: 22,
-
-    opacity: 1,
-
-    attribution:
-      '&copy; OpenStreetMap contributors'
-
-  }
-
-);
-
-
-
-// =====================================================
-// MAPA INICIAL
-// =====================================================
-
-satelite.addTo(map);
-
-callesOSMMezcla.addTo(map);
+).addTo(map);
 
 
 
@@ -494,7 +372,8 @@ let capaParcelas = null;
 
 let capaManzanas = null;
 
-let capaEtiquetasManzanas = L.layerGroup().addTo(map);
+let capaEtiquetasManzanas =
+  L.layerGroup().addTo(map);
 
 let parcelaSeleccionada = null;
 
@@ -503,7 +382,7 @@ let geojsonParcelas = null;
 
 
 // =====================================================
-// NORMALIZAR TEXTO
+// NORMALIZAR
 // =====================================================
 
 function normalizar(valor) {
@@ -512,9 +391,7 @@ function normalizar(valor) {
     valor === null ||
     valor === undefined
   ) {
-
     return '';
-
   }
 
   return String(valor)
@@ -527,18 +404,6 @@ function normalizar(valor) {
 
 // =====================================================
 // ORDEN NATURAL
-
-// Hace que:
-//
-// 2
-// 3
-// 10
-//
-// aparezcan correctamente y no:
-//
-// 10
-// 2
-// 3
 // =====================================================
 
 function ordenarNatural(a, b) {
@@ -609,16 +474,7 @@ fetch('acto_8-9-26.geojson')
 
 
         onEachFeature:
-
           function(feature, layer) {
-
-
-            const manzana =
-              feature.properties.manzana;
-
-
-            const parcela =
-              feature.properties.parcela;
 
 
             layer.estiloOriginal = {
@@ -641,7 +497,8 @@ fetch('acto_8-9-26.geojson')
               function() {
 
                 if (
-                  this !== parcelaSeleccionada
+                  this !==
+                  parcelaSeleccionada
                 ) {
 
                   this.setStyle({
@@ -666,7 +523,8 @@ fetch('acto_8-9-26.geojson')
               function() {
 
                 if (
-                  this !== parcelaSeleccionada
+                  this !==
+                  parcelaSeleccionada
                 ) {
 
                   this.setStyle(
@@ -702,21 +560,13 @@ fetch('acto_8-9-26.geojson')
     ).addTo(map);
 
 
-
-    // -------------------------------------------------
-    // LLENAR LISTA DE MANZANAS
-    // -------------------------------------------------
-
     cargarListaManzanas();
 
 
-
-    // -------------------------------------------------
-    // CENTRAR MAPA
-    // -------------------------------------------------
-
     if (
-      capaParcelas.getBounds().isValid()
+      capaParcelas
+        .getBounds()
+        .isValid()
     ) {
 
       map.fitBounds(
@@ -724,17 +574,15 @@ fetch('acto_8-9-26.geojson')
         capaParcelas.getBounds(),
 
         {
-
           padding: [30,30]
-
         }
 
       );
 
     }
 
-
   })
+
 
   .catch(error => {
 
@@ -780,21 +628,90 @@ fetch('mz_evwgs84.geojson')
         pane: 'paneManzanas',
 
 
-        style: {
+        // =============================================
+        // SIMBOLOGÍA SEGÚN evev
+        // =============================================
 
-          color: '#ffffff',
+        style:
+          function(feature) {
 
-          weight: 1,
 
-          opacity: 0.45,
+            const tipo =
+              normalizar(
+                feature.properties.evev
+              );
 
-          fillOpacity: 0
 
-        },
+            let colorBorde =
+              '#000000';
 
+
+            // ESPACIO VERDE
+            if (
+              tipo ===
+              'espacio verde'
+            ) {
+
+              colorBorde =
+                '#00a83a';
+
+            }
+
+
+            // RESERVA
+            else if (
+              tipo ===
+              'reserva'
+            ) {
+
+              colorBorde =
+                '#00a83a';
+
+            }
+
+
+            // ESPACIO COMUNITARIO
+            else if (
+              tipo ===
+              'espacio comunitario'
+            ) {
+
+              colorBorde =
+                '#00d8e8';
+
+            }
+
+
+            // RESTO
+            else {
+
+              colorBorde =
+                '#000000';
+
+            }
+
+
+            return {
+
+              color:
+                colorBorde,
+
+              weight: 2,
+
+              opacity: 0.95,
+
+              fillOpacity: 0
+
+            };
+
+          },
+
+
+        // =============================================
+        // ETIQUETAS DE MANZANA
+        // =============================================
 
         onEachFeature:
-
           function(feature, layer) {
 
 
@@ -813,46 +730,48 @@ fetch('mz_evwgs84.geojson')
             }
 
 
-            // -----------------------------------------
-            // Un número por geometría de manzana
-            // -----------------------------------------
-
             const centro =
-              layer.getBounds().getCenter();
+              layer
+                .getBounds()
+                .getCenter();
 
 
             const marcadorEtiqueta =
-
               L.marker(
 
                 centro,
 
                 {
 
-                  pane: 'paneEtiquetas',
+                  pane:
+                    'paneEtiquetas',
 
-                  interactive: false,
+                  interactive:
+                    false,
 
-                  icon: L.divIcon({
+                  icon:
+                    L.divIcon({
 
-                    className:
-                      'etiqueta-manzana',
+                      className:
+                        'etiqueta-manzana',
 
-                    html:
-                      String(manzana),
+                      html:
+                        String(manzana),
 
-                    iconSize: null
+                      iconSize:
+                        null
 
-                  })
+                    })
 
                 }
 
               );
 
 
-            capaEtiquetasManzanas.addLayer(
-              marcadorEtiqueta
-            );
+            capaEtiquetasManzanas
+              .addLayer(
+                marcadorEtiqueta
+              );
 
           }
 
@@ -861,11 +780,10 @@ fetch('mz_evwgs84.geojson')
     ).addTo(map);
 
 
-
     actualizarEtiquetasManzana();
 
-
   })
+
 
   .catch(error => {
 
@@ -883,98 +801,103 @@ fetch('mz_evwgs84.geojson')
 // PANEL DE BÚSQUEDA
 // =====================================================
 
-const controlBusqueda = L.control({
+const controlBusqueda =
+  L.control({
 
-  position: 'topleft'
+    position:
+      'topleft'
 
-});
-
-
-controlBusqueda.onAdd = function() {
-
-
-  const div = L.DomUtil.create(
-
-    'div',
-
-    'panel-busqueda'
-
-  );
+  });
 
 
-  div.innerHTML = `
-
-    <div class="titulo-busqueda">
-      🔍 Buscar parcela
-    </div>
+controlBusqueda.onAdd =
+  function() {
 
 
-    <label
-      class="label-busqueda"
-      for="selectManzana"
-    >
-      Manzana
-    </label>
+    const div =
+      L.DomUtil.create(
+
+        'div',
+
+        'panel-busqueda'
+
+      );
 
 
-    <select
-      id="selectManzana"
-      class="select-busqueda"
-    >
+    div.innerHTML = `
 
-      <option value="">
-        Seleccionar manzana
-      </option>
+      <div class="titulo-busqueda">
+        🔍 Buscar parcela
+      </div>
 
-    </select>
+      <label
+        class="label-busqueda"
+        for="selectManzana"
+      >
+        Manzana
+      </label>
+
+      <select
+        id="selectManzana"
+        class="select-busqueda"
+      >
+
+        <option value="">
+          Seleccionar manzana
+        </option>
+
+      </select>
+
+      <label
+        class="label-busqueda"
+        for="selectParcela"
+      >
+        Parcela
+      </label>
+
+      <select
+        id="selectParcela"
+        class="select-busqueda"
+        disabled
+      >
+
+        <option value="">
+          Seleccionar parcela
+        </option>
+
+      </select>
+
+      <button
+        id="botonBuscar"
+        class="boton-buscar"
+        disabled
+      >
+        VER PARCELA
+      </button>
+
+      <div
+        id="mensajeBusqueda"
+        class="mensaje-busqueda"
+      ></div>
+
+    `;
 
 
-    <label
-      class="label-busqueda"
-      for="selectParcela"
-    >
-      Parcela
-    </label>
+    L.DomEvent
+      .disableClickPropagation(
+        div
+      );
 
 
-    <select
-      id="selectParcela"
-      class="select-busqueda"
-      disabled
-    >
-
-      <option value="">
-        Seleccionar parcela
-      </option>
-
-    </select>
+    L.DomEvent
+      .disableScrollPropagation(
+        div
+      );
 
 
-    <button
-      id="botonBuscar"
-      class="boton-buscar"
-      disabled
-    >
-      VER PARCELA
-    </button>
+    return div;
 
-
-    <div
-      id="mensajeBusqueda"
-      class="mensaje-busqueda"
-    ></div>
-
-  `;
-
-
-  L.DomEvent.disableClickPropagation(div);
-
-  L.DomEvent.disableScrollPropagation(div);
-
-
-  return div;
-
-};
+  };
 
 
 controlBusqueda.addTo(map);
@@ -982,7 +905,7 @@ controlBusqueda.addTo(map);
 
 
 // =====================================================
-// CARGAR MANZANAS EN EL DESPLEGABLE
+// LISTA DE MANZANAS
 // =====================================================
 
 function cargarListaManzanas() {
@@ -997,46 +920,53 @@ function cargarListaManzanas() {
     new Set();
 
 
-  geojsonParcelas.features.forEach(
+  geojsonParcelas
+    .features
+    .forEach(
 
-    feature => {
-
-
-      const manzana =
-        feature.properties.manzana;
+      feature => {
 
 
-      if (
+        const manzana =
+          feature
+            .properties
+            .manzana;
 
-        manzana !== null &&
 
-        manzana !== undefined &&
+        if (
 
-        String(manzana).trim() !== ''
+          manzana !== null &&
 
-      ) {
+          manzana !== undefined &&
 
-        valores.add(
-          String(manzana).trim()
-        );
+          String(manzana).trim() !== ''
+
+        ) {
+
+          valores.add(
+            String(manzana).trim()
+          );
+
+        }
 
       }
 
-    }
-
-  );
+    );
 
 
   const lista =
-    Array.from(valores)
-      .sort(ordenarNatural);
+    Array
+      .from(valores)
+      .sort(
+        ordenarNatural
+      );
 
 
   const select =
-
-    document.getElementById(
-      'selectManzana'
-    );
+    document
+      .getElementById(
+        'selectManzana'
+      );
 
 
   lista.forEach(
@@ -1045,7 +975,10 @@ function cargarListaManzanas() {
 
 
       const opcion =
-        document.createElement('option');
+        document
+          .createElement(
+            'option'
+          );
 
 
       opcion.value =
@@ -1069,7 +1002,7 @@ function cargarListaManzanas() {
 
 
 // =====================================================
-// AL CAMBIAR MANZANA
+// CAMBIO DE SELECT
 // =====================================================
 
 document.addEventListener(
@@ -1105,14 +1038,13 @@ document.addEventListener(
 
 
 // =====================================================
-// ACTUALIZAR LISTA DE PARCELAS
+// LISTA DE PARCELAS
 // =====================================================
 
 function actualizarListaParcelas() {
 
 
   const manzanaSeleccionada =
-
     document
       .getElementById(
         'selectManzana'
@@ -1121,27 +1053,25 @@ function actualizarListaParcelas() {
 
 
   const selectParcela =
-
-    document.getElementById(
-      'selectParcela'
-    );
+    document
+      .getElementById(
+        'selectParcela'
+      );
 
 
   const boton =
-
-    document.getElementById(
-      'botonBuscar'
-    );
+    document
+      .getElementById(
+        'botonBuscar'
+      );
 
 
   const mensaje =
+    document
+      .getElementById(
+        'mensajeBusqueda'
+      );
 
-    document.getElementById(
-      'mensajeBusqueda'
-    );
-
-
-  // Limpiar lista
 
   selectParcela.innerHTML = `
 
@@ -1170,54 +1100,63 @@ function actualizarListaParcelas() {
     new Set();
 
 
-  geojsonParcelas.features.forEach(
+  geojsonParcelas
+    .features
+    .forEach(
 
-    feature => {
-
-
-      const manzana =
-        feature.properties.manzana;
+      feature => {
 
 
-      const parcela =
-        feature.properties.parcela;
+        const manzana =
+          feature
+            .properties
+            .manzana;
 
 
-      if (
+        const parcela =
+          feature
+            .properties
+            .parcela;
 
-        normalizar(manzana) ===
-        normalizar(manzanaSeleccionada)
 
-        &&
+        if (
 
-        parcela !== null
+          normalizar(manzana) ===
+          normalizar(
+            manzanaSeleccionada
+          )
 
-        &&
+          &&
 
-        parcela !== undefined
+          parcela !== null
 
-        &&
+          &&
 
-        String(parcela).trim() !== ''
+          parcela !== undefined
 
-      ) {
+          &&
 
-        parcelas.add(
-          String(parcela).trim()
-        );
+          String(parcela).trim() !== ''
+
+        ) {
+
+          parcelas.add(
+            String(parcela).trim()
+          );
+
+        }
 
       }
 
-    }
-
-  );
+    );
 
 
   const listaParcelas =
-
     Array
       .from(parcelas)
-      .sort(ordenarNatural);
+      .sort(
+        ordenarNatural
+      );
 
 
   listaParcelas.forEach(
@@ -1226,9 +1165,10 @@ function actualizarListaParcelas() {
 
 
       const opcion =
-        document.createElement(
-          'option'
-        );
+        document
+          .createElement(
+            'option'
+          );
 
 
       opcion.value =
@@ -1239,9 +1179,10 @@ function actualizarListaParcelas() {
         parcela;
 
 
-      selectParcela.appendChild(
-        opcion
-      );
+      selectParcela
+        .appendChild(
+          opcion
+        );
 
     }
 
@@ -1256,14 +1197,13 @@ function actualizarListaParcelas() {
 
 
 // =====================================================
-// ACTIVAR / DESACTIVAR BOTÓN
+// BOTÓN BUSCAR
 // =====================================================
 
 function actualizarBotonBuscar() {
 
 
   const parcela =
-
     document
       .getElementById(
         'selectParcela'
@@ -1281,10 +1221,6 @@ function actualizarBotonBuscar() {
 }
 
 
-
-// =====================================================
-// BOTÓN BUSCAR
-// =====================================================
 
 document.addEventListener(
 
@@ -1316,7 +1252,6 @@ function buscarParcela() {
 
 
   const manzanaBuscada =
-
     document
       .getElementById(
         'selectManzana'
@@ -1325,7 +1260,6 @@ function buscarParcela() {
 
 
   const parcelaBuscada =
-
     document
       .getElementById(
         'selectParcela'
@@ -1334,10 +1268,10 @@ function buscarParcela() {
 
 
   const mensaje =
-
-    document.getElementById(
-      'mensajeBusqueda'
-    );
+    document
+      .getElementById(
+        'mensajeBusqueda'
+      );
 
 
   if (
@@ -1361,18 +1295,28 @@ function buscarParcela() {
 
 
       const props =
-        layer.feature.properties;
+        layer
+          .feature
+          .properties;
 
 
       if (
 
-        normalizar(props.manzana) ===
-        normalizar(manzanaBuscada)
+        normalizar(
+          props.manzana
+        ) ===
+        normalizar(
+          manzanaBuscada
+        )
 
         &&
 
-        normalizar(props.parcela) ===
-        normalizar(parcelaBuscada)
+        normalizar(
+          props.parcela
+        ) ===
+        normalizar(
+          parcelaBuscada
+        )
 
       ) {
 
@@ -1422,10 +1366,6 @@ function seleccionarParcela(
 ) {
 
 
-  // --------------------------------------------------
-  // Restaurar parcela anterior
-  // --------------------------------------------------
-
   if (
     parcelaSeleccionada &&
     parcelaSeleccionada !== layer
@@ -1433,7 +1373,8 @@ function seleccionarParcela(
 
     parcelaSeleccionada
       .setStyle(
-        parcelaSeleccionada.estiloOriginal
+        parcelaSeleccionada
+          .estiloOriginal
       );
 
 
@@ -1443,25 +1384,23 @@ function seleccionarParcela(
   }
 
 
-
   parcelaSeleccionada =
     layer;
 
 
-
-  // --------------------------------------------------
-  // DESTACAR
-  // --------------------------------------------------
-
   layer.setStyle({
 
-    color: '#ffe000',
+    color:
+      '#ffe000',
 
-    weight: 5,
+    weight:
+      5,
 
-    fillColor: '#ffe000',
+    fillColor:
+      '#ffe000',
 
-    fillOpacity: 0.42
+    fillOpacity:
+      0.42
 
   });
 
@@ -1469,17 +1408,18 @@ function seleccionarParcela(
   layer.bringToFront();
 
 
-
-  // --------------------------------------------------
-  // DATOS
-  // --------------------------------------------------
-
   const manzana =
-    layer.feature.properties.manzana;
+    layer
+      .feature
+      .properties
+      .manzana;
 
 
   const parcela =
-    layer.feature.properties.parcela;
+    layer
+      .feature
+      .properties
+      .parcela;
 
 
   const texto =
@@ -1489,27 +1429,23 @@ function seleccionarParcela(
     parcela;
 
 
-
-  // --------------------------------------------------
-  // ETIQUETA COMPLETA
-  //
-  // Sólo aparece para la parcela seleccionada.
-  // --------------------------------------------------
-
   layer.bindTooltip(
 
     texto,
 
     {
 
-      permanent: true,
+      permanent:
+        true,
 
-      direction: 'center',
+      direction:
+        'center',
 
       className:
         'etiqueta-parcela-seleccionada',
 
-      opacity: 1
+      opacity:
+        1
 
     }
 
@@ -1518,11 +1454,6 @@ function seleccionarParcela(
 
   layer.openTooltip();
 
-
-
-  // --------------------------------------------------
-  // ZOOM
-  // --------------------------------------------------
 
   if (hacerZoom) {
 
@@ -1533,9 +1464,11 @@ function seleccionarParcela(
 
       {
 
-        padding: [80,80],
+        padding:
+          [80,80],
 
-        maxZoom: 20
+        maxZoom:
+          21
 
       }
 
@@ -1575,136 +1508,19 @@ function actualizarEtiquetasManzana() {
 
     }
 
-
-  } else {
-
-
-    if (
-      map.hasLayer(
-        capaEtiquetasManzanas
-      )
-    ) {
-
-      map.removeLayer(
-        capaEtiquetasManzanas
-      );
-
-    }
-
   }
-
-}
-
-
-
-// =====================================================
-// CAMBIO AUTOMÁTICO DE MAPA SEGÚN ZOOM
-// =====================================================
-
-function actualizarMapaBase() {
-
-
-  const zoom =
-    map.getZoom();
-
-
-
-  // --------------------------------------------------
-  // ZOOM 19 O MENOR
-  //
-  // SATÉLITE + OSM MULTIPLY
-  // --------------------------------------------------
-
-  if (
-    zoom <
-    ZOOM_CAMBIO_BASE
-  ) {
-
-
-    if (
-      map.hasLayer(
-        osmNormal
-      )
-    ) {
-
-      map.removeLayer(
-        osmNormal
-      );
-
-    }
-
-
-    if (
-      !map.hasLayer(
-        satelite
-      )
-    ) {
-
-      satelite.addTo(
-        map
-      );
-
-    }
-
-
-    if (
-      !map.hasLayer(
-        callesOSMMezcla
-      )
-    ) {
-
-      callesOSMMezcla
-        .addTo(map);
-
-    }
-
-
-  }
-
-
-  // --------------------------------------------------
-  // ZOOM 20 O MAYOR
-  //
-  // OSM STANDARD NORMAL
-  // --------------------------------------------------
 
   else {
 
 
     if (
       map.hasLayer(
-        satelite
+        capaEtiquetasManzanas
       )
     ) {
 
       map.removeLayer(
-        satelite
-      );
-
-    }
-
-
-    if (
-      map.hasLayer(
-        callesOSMMezcla
-      )
-    ) {
-
-      map.removeLayer(
-        callesOSMMezcla
-      );
-
-    }
-
-
-    if (
-      !map.hasLayer(
-        osmNormal
-      )
-    ) {
-
-      osmNormal.addTo(
-        map
+        capaEtiquetasManzanas
       );
 
     }
@@ -1715,17 +1531,11 @@ function actualizarMapaBase() {
 
 
 
-// =====================================================
-// EVENTO DE ZOOM
-// =====================================================
-
 map.on(
 
   'zoomend',
 
   function() {
-
-    actualizarMapaBase();
 
     actualizarEtiquetasManzana();
 
@@ -1739,46 +1549,50 @@ map.on(
 // BOTÓN MI UBICACIÓN
 // =====================================================
 
-const botonUbicacion = L.control({
+const botonUbicacion =
+  L.control({
 
-  position: 'topright'
+    position:
+      'topright'
 
-});
-
-
-botonUbicacion.onAdd = function() {
-
-
-  const div =
-    L.DomUtil.create(
-
-      'div',
-
-      'boton-ubicacion'
-
-    );
+  });
 
 
-  div.innerHTML =
-    '📍';
+botonUbicacion.onAdd =
+  function() {
 
 
-  div.title =
-    'Mostrar mi ubicación';
+    const div =
+      L.DomUtil.create(
+
+        'div',
+
+        'boton-ubicacion'
+
+      );
 
 
-  L.DomEvent.disableClickPropagation(
-    div
-  );
+    div.innerHTML =
+      '📍';
 
 
-  div.onclick =
-    localizarUsuario;
+    div.title =
+      'Mostrar mi ubicación';
 
 
-  return div;
+    L.DomEvent
+      .disableClickPropagation(
+        div
+      );
 
-};
+
+    div.onclick =
+      localizarUsuario;
+
+
+    return div;
+
+  };
 
 
 botonUbicacion.addTo(map);
@@ -1786,7 +1600,7 @@ botonUbicacion.addTo(map);
 
 
 // =====================================================
-// UBICACIÓN DEL USUARIO
+// GEOLOCALIZACIÓN
 // =====================================================
 
 let marcadorUsuario =
@@ -1816,11 +1630,14 @@ function localizarUsuario() {
 
   map.locate({
 
-    setView: true,
+    setView:
+      true,
 
-    maxZoom: 19,
+    maxZoom:
+      19,
 
-    enableHighAccuracy: true
+    enableHighAccuracy:
+      true
 
   });
 
@@ -1861,11 +1678,11 @@ map.on(
     }
 
 
-
     const iconoUsuario =
       L.divIcon({
 
-        className: '',
+        className:
+          '',
 
         html:
           '<div class="mi-ubicacion"></div>',
@@ -1877,7 +1694,6 @@ map.on(
           [12,12]
 
       });
-
 
 
     marcadorUsuario =
@@ -1893,23 +1709,22 @@ map.on(
       ).addTo(map);
 
 
+    marcadorUsuario
+      .bindPopup(
 
-    marcadorUsuario.bindPopup(
+        '<strong>Mi ubicación</strong>' +
 
-      '<strong>Mi ubicación</strong>' +
+        '<br><br>' +
 
-      '<br><br>' +
+        'Precisión aproximada: ' +
 
-      'Precisión aproximada: ' +
+        Math.round(
+          e.accuracy
+        ) +
 
-      Math.round(
-        e.accuracy
-      ) +
+        ' metros'
 
-      ' metros'
-
-    );
-
+      );
 
 
     circuloPrecision =
@@ -1922,9 +1737,11 @@ map.on(
           radius:
             e.accuracy,
 
-          weight: 1,
+          weight:
+            1,
 
-          fillOpacity: 0.10
+          fillOpacity:
+            0.10
 
         }
 
